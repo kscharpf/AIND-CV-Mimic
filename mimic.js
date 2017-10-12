@@ -134,6 +134,7 @@ detector.addEventListener("onImageResultsSuccess", function(faces, image, timest
 
     // TODO: Call your function to run the game (define it first!)
     // <your code here>
+    mimicMeGame(canvas, image, faces[0]);
   }
 });
 
@@ -148,6 +149,8 @@ function drawFeaturePoints(canvas, img, face) {
   // TODO: Set the stroke and/or fill style you want for each feature point marker
   // See: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D#Fill_and_stroke_styles
   // <your code here>
+  ctx.strokeStyle = "#00FF00"
+  //console.log(face)
   
   // Loop over each feature point in the face
   for (var id in face.featurePoints) {
@@ -155,7 +158,10 @@ function drawFeaturePoints(canvas, img, face) {
 
     // TODO: Draw feature point, e.g. as a circle using ctx.arc()
     // See: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/arc
-    // <your code here>
+    // <your code here> 
+    ctx.beginPath();
+    ctx.arc(featurePoint.x, featurePoint.y, 5, 0, 2*Math.PI);
+    ctx.stroke();
   }
 }
 
@@ -166,11 +172,14 @@ function drawEmoji(canvas, img, face) {
 
   // TODO: Set the font and style you want for the emoji
   // <your code here>
+  ctx.font = "48px Arial";
   
   // TODO: Draw it using ctx.strokeText() or fillText()
   // See: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fillText
   // TIP: Pick a particular feature point as an anchor so that the emoji sticks to your face
   // <your code here>
+  ctx.fillStyle = "#FFFF00"
+  ctx.fillText(face.emojis.dominantEmoji, face.featurePoints[0].x, face.featurePoints[0].y);
 }
 
 // TODO: Define any variables and functions to implement the Mimic Me! game mechanics
@@ -187,3 +196,19 @@ function drawEmoji(canvas, img, face) {
 // - Define a game reset function (same as init?), and call it from the onReset() function above
 
 // <your code here>
+var currentEmojiIndex = 0;
+var successfulMatches = 0;
+var totalGames = 0;
+function mimicMeGame(canvas, img, face) {
+	setTargetEmoji(emojis[currentEmojiIndex]);
+	if(toUnicode(face.emojis.dominantEmoji) == emojis[currentEmojiIndex]) {
+		successfulMatches++;
+		console.log("Emoji match: " + emojis[currentEmojiIndex]);
+		setScore(successfulMatches, totalGames);
+		currentEmojiIndex++;
+		if(currentEmojiIndex >= emojis.length) {
+			currentEmojiIndex = 0;
+		}
+		totalGames++;
+	}
+}
